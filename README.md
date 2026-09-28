@@ -114,7 +114,7 @@ PIMS addresses problems such as:
 
 ---
 
-# 💡 PIMS Solution
+## 💡 PIMS Solution
 
 PIMS connects the operational workflow:
 
@@ -203,16 +203,6 @@ Material Receipt
 - Vendor ratings/performance
 - Procurement history
 
-## Financial Tracking
-- Project budgets
-- Actual expenditure
-- Budget variance
-- Bills
-- Cash/bank records
-- Petty cash
-- VAT/Tax-related records
-- Cost analysis
-
 ## Reports & Analytics
 - Inventory
 - Stock movements
@@ -222,8 +212,7 @@ Material Receipt
 - Project costs
 - Budget variance
 - Inventory valuation
-- Financial information
-- Business analytics
+- Operational analytics
 
 ## Administration
 - User management
@@ -451,6 +440,8 @@ PIMS combines:
 The actual PIMS application is:
 
 **LANDORA-PIMS Client + PIMS Backend + Neon PostgreSQL**
+
+> **Current scope note:** Financial Tracking is not included in the current implemented PIMS scope documented here. Future financial/accounting modules should be added only when they are actually implemented in the runtime repositories.
 
 with web and Android clients communicating through the backend REST API.
 
