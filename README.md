@@ -1,58 +1,131 @@
 # PIMS — Project Inventory Management System
 
-> Enterprise resource, multi-location inventory, procurement and financial tracking platform for construction and project-based operations.
+> Enterprise inventory, procurement, project resource and financial management platform for construction and real-estate operations.
 
-**Product:** PIMS — Project Inventory Management System  
-**Repository:** `iaaasif/pims`  
-**Developer:** Abdullah Al Asif  
-**Platforms:** Web + Android
+## ⚠️ Actual Runtime Architecture
+
+The important correction is:
+
+**The PIMS application is run through TWO repositories:**
+
+### 1. PIMS Backend
+https://github.com/iaaasif/pims-backend
+
+Private NestJS + TypeScript backend/API.
+
+Responsibilities:
+- REST API
+- Authentication and JWT security
+- Role-based authorization
+- User management
+- Projects
+- Materials
+- Inventory
+- Inventory transfers
+- Purchase Requisitions
+- Purchase Orders
+- Vendors
+- Budget variance
+- Audit logs
+- Neon PostgreSQL access
+- Swagger/OpenAPI documentation
+
+### 2. LANDORA PIMS
+https://github.com/iaaasif/Landora-pims
+
+Private LANDORA implementation/client application.
+
+Responsibilities:
+- React web application
+- User interface and UX
+- Dashboard and business modules
+- Inventory screens
+- Procurement screens
+- Financial screens
+- Reports and analytics
+- API client integration
+- Firebase-related notifications
+- Capacitor Android application
+- LANDORA-specific implementation
+
+The repository iaaasif/pims is **not treated as the runtime/application repository in this case study**.
 
 ---
 
-## 📌 Project Overview
+## 🏗️ System Architecture
 
-PIMS is a business-focused inventory and procurement management application designed for construction enterprises, engineering firms, project sites and distributed supply-chain operations.
+```
+                    PIMS USERS
+               Web Browser / Android
+                        │
+                        ▼
+             ┌─────────────────────┐
+             │    LANDORA-PIMS     │
+             │ React + Vite + TS   │
+             │ Web + Capacitor     │
+             └──────────┬──────────┘
+                        │
+                   HTTPS REST API
+                        │
+                        ▼
+             ┌─────────────────────┐
+             │    PIMS-BACKEND     │
+             │ NestJS + TypeScript │
+             │ Auth / RBAC / Logic │
+             │ REST API            │
+             └──────────┬──────────┘
+                        │
+                        ▼
+             ┌─────────────────────┐
+             │  Neon PostgreSQL    │
+             │      Database       │
+             └─────────────────────┘
+```
 
-The system brings project resources, inventory, procurement, vendors, financial tracking, approvals, reporting and notifications into a single application.
+### Separation of Responsibilities
 
-The case study in this repository is based **only on the original PIMS repository**:
-
-urlPIMS — iaaasif/pimshttps://github.com/iaaasif/pims
-
-No `pims-backend`, `Landora-pims`, or other repository is required to describe this case study.
+| Layer | Repository | Responsibility |
+|---|---|---|
+| Client/Application | Landora-pims | UI, web application, Android |
+| Backend/API | pims-backend | Auth, RBAC, business logic, REST API |
+| Database | Backend-managed | Neon PostgreSQL |
+| Mobile | Landora-pims | Capacitor Android |
+| API Documentation | pims-backend | Swagger/OpenAPI |
+| Notifications | Application/backend integration | Firebase-related notifications |
 
 ---
 
-## 🎯 Problem
+# 🎯 Business Problem
 
-Project-based businesses often manage materials and purchasing through spreadsheets, paper documents, messages and disconnected systems.
+Construction and real-estate businesses often manage materials, procurement, projects, vendors and expenses across multiple locations.
 
-Typical problems include:
+PIMS addresses problems such as:
 
-- Limited visibility of stock across locations
-- Manual purchase requisition and approval processes
-- Difficulty tracking material consumption
-- Stock discrepancies between sites
-- Slow procurement workflows
-- Difficult vendor and purchase tracking
-- Manual financial reconciliation
-- Repetitive reporting work
-- Limited real-time operational visibility
-
-PIMS is designed to centralize these workflows.
+- Manual stock tracking
+- Spreadsheet-based inventory
+- Poor project-site visibility
+- Uncontrolled material transfers
+- Manual purchase requisitions
+- Slow approval workflows
+- Scattered vendor information
+- Difficult budget monitoring
+- Weak audit trails
+- Repetitive reporting
 
 ---
 
-## 💡 Solution
+# 💡 PIMS Solution
 
-PIMS provides a unified application for managing:
+PIMS connects the operational workflow:
 
 ```
 Projects
    ↓
 Locations
    ↓
-Materials & Inventory
+Materials
+   ↓
+Inventory
    ↓
 Procurement
    ↓
@@ -63,461 +136,329 @@ Financial Tracking
 Reports & Analytics
 ```
 
-The platform combines operational data with approval workflows, stock movement tracking, financial information and business reporting.
+The backend provides authoritative business rules and data access, while LANDORA-PIMS provides the user-facing web and Android experience.
 
 ---
 
-## 🚀 Key Features
+# 🚀 Core Modules
 
-### 📦 Multi-Location Inventory
+## Projects
+- Construction project management
+- Project-level information
+- Budget information
+- Project inventory visibility
+- Budget variance analysis
 
-- Project/location-based inventory
-- Material stock tracking
-- Minimum stock thresholds
-- Material allocation
-- Material consumption records
-- Stock movement history
-- Inter-location stock transfers
-- Destination receipt verification
+## Materials
+- Central material catalog
+- Units
+- Material classification
+- Stock-related information
+
+## Inventory
+- Real-time stock ledger
+- Stock transactions
+- Material receipts
+- Material issues
+- Material consumption
 - Low-stock alerts
+- Project/location allocation
 
-### 🧾 Procurement
+## Inventory Transfers
+- Inter-project transfers
+- Transfer requests
+- Approval workflow
+- Origin/destination tracking
+- Transfer history
 
-- Purchase Requisition (PR)
-- Multi-item requisitions
-- Department review
-- Approval workflows
-- Purchase Order (PO) creation
-- Vendor assignment
-- Purchase order management
-- Vendor performance tracking
-- Print-ready procurement documents
+## Purchase Requisition
 
-### 💰 Financial Tracking
+```
+Requirement
+    ↓
+Purchase Requisition
+    ↓
+Review
+    ↓
+Approval / Rejection
+```
 
-- Project budget monitoring
-- Actual expenditure tracking
+## Purchase Order
+
+```
+Approved PR
+    ↓
+Purchase Order
+    ↓
+Vendor
+    ↓
+Procurement
+    ↓
+Material Receipt
+```
+
+## Vendor Management
+- Supplier records
+- Vendor search
+- Vendor ratings/performance
+- Procurement history
+
+## Financial Tracking
+- Project budgets
+- Actual expenditure
 - Budget variance
-- Bill verification
-- Invoice matching
-- Bank and cash book records
-- Petty cash management
-- Expense claims
-- VAT and tax records
-- Financial audit trails
+- Bills
+- Cash/bank records
+- Petty cash
+- VAT/Tax-related records
+- Cost analysis
 
-### 📊 Reports & Analytics
-
-The repository documents a reporting layer containing **16+ analytical report views**, including areas such as:
-
-- Stock movement
+## Reports & Analytics
+- Inventory
+- Stock movements
+- Material consumption
+- Procurement
+- Vendors
+- Project costs
+- Budget variance
 - Inventory valuation
-- Vendor spending
-- Project cost analysis
-- Material usage
-- Financial analysis
-- ROI and timeline information
-- Custom report generation
+- Financial information
+- Business analytics
 
-Reports support export-oriented workflows such as Excel, CSV and PDF.
-
-### 🔐 Access Control
-
-The product is designed around role-based access control and approval hierarchies.
-
-Documented roles include:
-
-- Admin
-- Management / Manager
-- Storekeeper
-- Accountant
-- User
-
-Permissions are intended to control access to operational and approval functions.
-
-> Credentials and sensitive authentication information from development documentation are intentionally not reproduced in this public case study.
-
-### 🔔 Notifications
-
-Firebase is used for real-time notification and broadcast functionality.
-
-The application is designed to surface operational events and alerts without requiring users to repeatedly refresh the application.
-
-### 🌓 Adaptive UI
-
-PIMS supports:
-
-- Light and dark themes
-- Responsive layouts
-- Mobile-oriented navigation
-- Android system bar handling
-- Adaptive native/web presentation
+## Administration
+- User management
+- Roles
+- Permissions
+- Authentication
+- System configuration
+- Audit logs
 
 ---
 
-## 🏗️ System Architecture
+# 🔐 Backend Security
 
-The original repository describes a client-focused cloud architecture:
+The PIMS backend is built with NestJS and TypeScript and uses:
 
-```
-                    ┌─────────────────────────┐
-                    │       User / Client     │
-                    │  Web Browser / Android  │
-                    └────────────┬────────────┘
-                                 │
-                                 ▼
-                    ┌─────────────────────────┐
-                    │   React + TypeScript    │
-                    │       PIMS Frontend     │
-                    └───────┬─────────┬───────┘
-                            │         │
-                 ┌──────────┘         └──────────┐
-                 ▼                               ▼
-      ┌─────────────────────┐          ┌─────────────────────┐
-      │ Neon / PostgreSQL   │          │      Firebase       │
-      │ Data & persistence  │          │ Notifications/RT   │
-      └─────────────────────┘          └─────────────────────┘
-                            │
-                            ▼
-                  ┌─────────────────────┐
-                  │  Business Modules   │
-                  │ Inventory / PR / PO │
-                  │ Finance / Reports   │
-                  └─────────────────────┘
-```
+- Passport JWT authentication
+- Role-based authorization
+- Current-user guards
+- Role guards
+- Public-route controls
+- DTO validation
+- Class-validator
+- Class-transformer
+- Modular domain architecture
+- Audit logging
 
-The repository also contains Supabase-related dependencies and product requirements for authentication/data workflows. The implementation has therefore evolved across multiple data/auth integration approaches; this case study intentionally describes the repository at a product/architecture level rather than claiming a separate backend repository.
+The backend manages database access and server-side secrets.
 
 ---
 
-## 🛠️ Technology Stack
+# 🛠️ Technology Stack
+
+## PIMS Backend
 
 | Area | Technology |
 |---|---|
-| Frontend | React 19 |
-| Language | TypeScript 5.9 |
-| Build Tool | Vite 7 |
-| Styling | Tailwind CSS 3 |
-| UI Primitives | Radix UI |
-| Database | Neon Serverless PostgreSQL |
-| Additional Data/Auth Integration | Supabase |
-| Realtime Notifications | Firebase |
-| Routing | React Router 7 |
+| Framework | NestJS 10+ |
+| Language | TypeScript |
+| API | REST |
+| Database | Neon PostgreSQL 16+ |
+| Driver | pg |
+| Authentication | Passport JWT |
+| Authorization | Role-based guards |
+| Validation | class-validator / class-transformer |
+| Documentation | Swagger / OpenAPI |
+
+## LANDORA PIMS
+
+| Area | Technology |
+|---|---|
+| UI Framework | React 19 |
+| Language | TypeScript |
+| Build Tool | Vite |
+| Styling | Tailwind CSS |
+| UI | Radix UI |
+| Routing | React Router |
 | Charts | Recharts |
-| Icons | Lucide React |
 | Forms | React Hook Form |
 | Validation | Zod |
+| Icons | Lucide React |
+| Notifications | Firebase / Sonner |
 | Mobile | Capacitor 8 |
 | Android | Native Android project |
-| Deployment Direction | Vercel / cPanel-compatible web deployment |
 
 ---
 
-## 📂 Repository Structure
+# 📱 Web + Android
 
-The original PIMS repository is organized around a single application codebase:
-
-```
-pims/
-├── android/                  # Native Android / Capacitor project
-├── src/
-│   ├── components/           # Reusable UI & domain components
-│   │   ├── admin/
-│   │   ├── layout/
-│   │   ├── procurement/
-│   │   └── ui/
-│   ├── context/              # Application contexts
-│   ├── hooks/                # Reusable business/application hooks
-│   ├── lib/                  # Database, Firebase & utility integrations
-│   ├── pages/                # Application pages/modules
-│   └── App.tsx               # Application entry
-├── capacitor.config.ts       # Android/Capacitor configuration
-├── vite.config.ts            # Vite build configuration
-├── tailwind.config.js        # Tailwind configuration
-├── package.json              # Dependencies & scripts
-└── PRD.md                    # Product requirements
-```
-
-This structure keeps the core product in one maintainable application repository while separating UI components, business hooks, integrations and platform-specific Android code.
-
----
-
-## 📱 Web + Android
-
-One of the main strengths of the project is its dual-platform direction.
+LANDORA-PIMS supports both web and Android application delivery.
 
 ### Web
 
-The React/Vite application can be built as a production web bundle.
-
-Typical workflow:
-
-```bash
-npm install
-npm run build
-npm run preview
 ```
-
-The repository also documents deployment of the generated `dist/` build to hosting environments such as cPanel.
+React
+  ↓
+Vite Build
+  ↓
+Production Web Application
+```
 
 ### Android
 
-PIMS uses Capacitor to package the web application into a native Android application.
-
-Documented workflow:
-
-```bash
-npm run build
-npx cap sync android
-npx cap open android
+```
+React Application
+      ↓
+Vite Build
+      ↓
+Capacitor
+      ↓
+Android Project
+      ↓
+APK / AAB
 ```
 
-The repository contains the Android project under:
-
-```
-android/
-```
+The application communicates with the backend API rather than exposing production database credentials to the client.
 
 ---
 
-## 🧩 Core Business Modules
-
-### 1. Dashboard
-Operational overview and real-time business metrics.
-
-### 2. Locations
-Management of project/site/warehouse locations.
-
-### 3. Projects
-Project-level organization of resources and activities.
-
-### 4. Materials
-Material master data and inventory control.
-
-### 5. Inventory
-Stock quantities, movement, allocation and consumption.
-
-### 6. Transfers
-Movement of materials between locations.
-
-### 7. Procurement
-Purchase requisitions, approvals and purchase orders.
-
-### 8. Vendors
-Vendor information and procurement performance tracking.
-
-### 9. Financial Management
-Budgets, expenses, bills, cash and tax-related records.
-
-### 10. Reports
-Operational, inventory, procurement and financial analytics.
-
-### 11. Administration
-Users, permissions, settings and system-level controls.
-
-### 12. Notifications
-Real-time operational alerts and system broadcasts.
-
----
-
-## 🔄 Example Procurement Workflow
+# 🔄 End-to-End Procurement Workflow
 
 ```
+Project
+   ↓
+Material Requirement
+   ↓
 Purchase Requisition
-        ↓
-Department Review
-        ↓
+   ↓
 Approval
-        ↓
+   ↓
 Purchase Order
-        ↓
-Vendor Assignment
-        ↓
-Purchase
-        ↓
+   ↓
+Vendor
+   ↓
 Material Receipt
-        ↓
+   ↓
 Inventory Update
-        ↓
-Financial / Bill Tracking
+   ↓
+Project Consumption
+   ↓
+Financial Tracking
+   ↓
+Reports
 ```
-
-This workflow is designed to connect procurement activity with inventory and financial records instead of treating each process as an isolated task.
 
 ---
 
-## 📦 Inventory Workflow
+# 📊 Backend API
 
-```
-Material Receipt
-       ↓
-Location Stock
-       ↓
-Allocation / Issue
-       ↓
-Material Consumption
-       ↓
-Stock Movement
-       ↓
-Transfer / Reconciliation
-       ↓
-Reports & Valuation
-```
+The backend documents APIs for:
 
-This provides a traceable operational history for project materials.
-
----
-
-## 📊 Reporting Architecture
-
-PIMS treats reporting as a core part of the product rather than an afterthought.
-
-The repository documents report categories covering:
-
+- Health checks
+- Authentication
+- Users
+- Projects
+- Materials
 - Inventory
-- Stock movement
-- Material usage
-- Procurement
-- Vendor spending
-- Project cost
-- Financial information
-- Valuation
-- ROI / timeline analysis
+- Inventory alerts
+- Inventory transactions
+- Inventory transfers
+- Purchase requisitions
+- Purchase orders
+- Vendors
+- Audit logs
 
-A custom report builder is also documented for selecting report columns and exporting data.
-
----
-
-## 🎨 Product Design Philosophy
-
-PIMS is designed around:
-
-**Operational clarity → Structured data → Controlled workflows → Actionable reporting**
-
-The UI emphasizes:
-
-- Clear navigation
-- Responsive layouts
-- Reusable components
-- Consistent forms
-- Business-oriented dashboards
-- Accessible UI primitives
-- Mobile usability
-- Light/dark theme support
+Swagger/OpenAPI provides interactive API documentation.
 
 ---
 
-## 🔒 Security & Privacy
+# 📁 Repository Structure
 
-PIMS is intended for business and operational data.
-
-The public case study therefore does **not** expose:
-
-- Production credentials
-- Database passwords
-- API secrets
-- Private environment variables
-- Real business credentials
-- Sensitive customer information
-
-The original repository's development documentation may contain example configuration material; sensitive values are intentionally excluded from this case study.
-
----
-
-## 🧪 Development & Quality
-
-The repository provides standard development scripts:
-
-```bash
-# Development
-npm run dev
-
-# Production build / TypeScript check
-npm run build
-
-# Linting
-npm run lint
-
-# Local production preview
-npm run preview
+```
+PIMS Ecosystem
+│
+├── pims-backend/
+│   ├── Auth
+│   ├── Users
+│   ├── Projects
+│   ├── Materials
+│   ├── Inventory
+│   ├── Vendors
+│   ├── Purchase Requisitions
+│   ├── Purchase Orders
+│   ├── Audit Logs
+│   └── System
+│
+└── Landora-pims/
+    ├── React Application
+    ├── UI Components
+    ├── Pages
+    ├── API Client
+    ├── Reports
+    ├── Android
+    └── Capacitor
 ```
 
-The project also uses TypeScript, ESLint and production build verification as part of its development workflow.
+---
+
+# 🎨 Product Design Philosophy
+
+**Design → Structure → Control → Automation → Reporting**
+
+PIMS focuses on:
+
+- Business-first workflows
+- Clear operational dashboards
+- Responsive UI
+- Mobile accessibility
+- Role-based access
+- Centralized data
+- Auditability
+- Modular architecture
 
 ---
 
-## 🧠 Development Approach
+# 🔒 Privacy & Commercial Source Code
 
-PIMS is built around real business workflow requirements rather than being a generic inventory demo.
+The runtime repositories are private.
 
-The development approach combines:
+This public case study intentionally does not expose:
 
-- Business process analysis
-- UI/UX design
-- React application development
-- TypeScript
-- Database integration
-- Mobile packaging
-- Real-time notifications
-- Reporting and analytics
-- AI-assisted development
-- Iterative product development
+- Database credentials
+- JWT secrets
+- API keys
+- Environment secrets
+- Production business data
+- Private source code
+- Customer information
 
 ---
 
-## 📈 Product Goals
+# 👨‍💻 Developer
 
-The PIMS product direction is focused on:
-
-1. Centralizing project and inventory information
-2. Reducing manual administrative work
-3. Improving procurement visibility
-4. Connecting inventory with financial tracking
-5. Providing real-time operational information
-6. Creating reliable audit trails
-7. Supporting both office and field users
-8. Building a scalable foundation for additional business modules
-
----
-
-## 👨‍💻 Developer
-
-### Abdullah Al Asif
+## Abdullah Al Asif
 
 **Graphic Designer • Software Developer • CSE Engineer**
 
-PIMS reflects a combination of:
+PIMS combines:
 
-**Design + Software Development + Business Operations + Automation**
-
-The product is built from practical business requirements and focuses on converting real operational workflows into usable digital systems.
+**UI/UX + Software Engineering + Construction Operations + Inventory + Procurement + Automation**
 
 ---
 
-## 📌 Project Status
+# 📌 Project Architecture Summary
 
-PIMS is an actively evolving product.
+The actual PIMS application is:
 
-The repository includes:
+**LANDORA-PIMS Client + PIMS Backend + Neon PostgreSQL**
 
-- Production-oriented web application structure
-- Android/Capacitor project
-- Inventory workflows
-- Procurement workflows
-- Financial tracking
-- Reporting
-- Notifications
-- Role-based access concepts
-- Product requirements documentation
-
-Additional modules can be added as business requirements evolve.
+with web and Android clients communicating through the backend REST API.
 
 ---
 
-## 🔗 Source Repository
+## 🔗 Runtime Repositories
 
-urlView the original PIMS repository on GitHubhttps://github.com/iaaasif/pims
-
----
+- https://github.com/iaaasif/pims-backend
+- https://github.com/iaaasif/Landora-pims
 
 ⭐ **Design it. Build it. Automate it. Improve it.**
